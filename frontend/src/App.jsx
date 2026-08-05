@@ -1,20 +1,104 @@
-// Seed do componente raiz do Document Management System.
-//
-// Este é apenas um ponto de partida mínimo. Durante o Passo 3 você vai usar o
-// Agent Mode do GitHub Copilot para construir os componentes:
-//   - components/UploadComponent
-//   - components/DocumentList
-//   - components/DownloadButton
-// e o serviço services/ que consome a API do backend via fetch.
+import { useEffect, useMemo, useState } from 'react';
+import { UploadForm } from './components/UploadForm.jsx';
+import { DocumentList } from './components/DocumentList.jsx';
+import { downloadDocument, listDocuments } from './services/documentApi.js';
 
 export default function App() {
+  const [documents, setDocuments] = useState([]);
+  const [ownerFilter, setOwnerFilter] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const totalSize = useMemo(() => {
+    return documents.reduce((acc, item) => acc + item.size, 0);
+  }, [documents]);
+
+  async function loadDocuments(currentOwnerFilter = '') {
+    setIsLoading(true);
+    setErrorMessage('');
+
+    try {
+      const response = await listDocuments(currentOwnerFilter);
+      setDocuments(response.items);
+    } catch (error) {
+      setErrorMessage(error.message || 'Falha ao carregar documentos');
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadDocuments();
+  }, []);
+
+  async function handleSearch(event) {
+    event.preventDefault();
+    await loadDocuments(ownerFilter);
+  }
+
+  async function handleUploadSuccess() {
+    await loadDocuments(ownerFilter);
+  }
+
+  async function handleDownload(document) {
+    try {
+      await downloadDocument(document.id, document.originalName);
+    } catch (error) {
+      setErrorMessage(error.message || 'Falha ao baixar documento');
+    }
+  }
+
   return (
-    <main style={{ fontFamily: 'system-ui, sans-serif', padding: '2rem' }}>
-      <h1>Document Management System</h1>
-      <p>
-        Seed do frontend. Construa a interface durante o Passo 3 usando o Agent
-        Mode do GitHub Copilot.
-      </p>
+    <main className="app-shell">
+      <section className="hero">
+        <h1>Document Management System</h1>
+        <p>
+          Upload, listagem e download de documentos com armazenamento local no backend.
+        </p>
+      </section>
+
+      <section className="panel">
+        <UploadForm onUploadSuccess={handleUploadSuccess} />
+      </section>
+
+      <section className="panel">
+        <form className="filter-form" onSubmit={handleSearch}>
+          <label htmlFor="owner-filter">Filtrar por owner</label>
+          <div className="filter-row">
+            <input
+              id="owner-filter"
+              type="text"
+              value={ownerFilter}
+              onChange={(event) => setOwnerFilter(event.target.value)}
+              placeholder="Ex.: user-123"
+            />
+            <button type="submit">Filtrar</button>
+            <button
+              type="button"
+              className="ghost"
+              onClick={() => {
+                setOwnerFilter('');
+                loadDocuments('');
+              }}
+            >
+              Limpar
+            </button>
+          </div>
+        </form>
+
+        {errorMessage ? <p className="error-message">{errorMessage}</p> : null}
+
+        <div className="summary">
+          <span>Total de documentos: {documents.length}</span>
+          <span>Tamanho total: {totalSize} bytes</span>
+        </div>
+
+        <DocumentList
+          items={documents}
+          isLoading={isLoading}
+          onDownload={handleDownload}
+        />
+      </section>
     </main>
   );
 }

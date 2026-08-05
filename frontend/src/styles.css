@@ -1,0 +1,163 @@
+:root {
+  --bg: linear-gradient(130deg, #f6f5f0 0%, #e5edf3 50%, #f4efe4 100%);
+  --card: #ffffff;
+  --ink: #1c2b33;
+  --muted: #5b6a72;
+  --accent: #0d6f6d;
+  --accent-2: #d59422;
+  --danger: #b4372d;
+  --success: #1c7a4b;
+  --border: #d5dde2;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Avenir Next', 'Trebuchet MS', 'Segoe UI', sans-serif;
+}
+
+#root {
+  width: 100%;
+}
+
+.app-shell {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px;
+  display: grid;
+  gap: 20px;
+}
+
+.hero {
+  background: radial-gradient(circle at top right, #f2c26d 0%, #f6e5c4 30%, #ffffff 100%);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 12px 30px rgba(15, 43, 56, 0.1);
+}
+
+.hero h1 {
+  margin: 0 0 8px;
+  letter-spacing: 0.3px;
+}
+
+.hero p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 8px 22px rgba(18, 43, 54, 0.08);
+}
+
+.upload-form,
+.filter-form {
+  display: grid;
+  gap: 10px;
+}
+
+label {
+  font-weight: 600;
+}
+
+input {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+}
+
+button {
+  border: 0;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #ffffff;
+  padding: 10px 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:hover {
+  filter: brightness(0.95);
+}
+
+button.ghost {
+  background: #ffffff;
+  color: var(--ink);
+  border: 1px solid var(--border);
+}
+
+.filter-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-row input {
+  flex: 1;
+  min-width: 180px;
+}
+
+.summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 14px 0;
+  color: var(--muted);
+}
+
+.list-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  padding: 10px 8px;
+}
+
+th {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.error-message {
+  color: var(--danger);
+  margin: 6px 0 0;
+}
+
+.success-message {
+  color: var(--success);
+  margin: 6px 0 0;
+}
+
+@media (max-width: 640px) {
+  .app-shell {
+    padding: 14px;
+  }
+
+  .panel,
+  .hero {
+    padding: 16px;
+  }
+
+  .summary {
+    flex-direction: column;
+  }
+}
