@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { UploadComponent } from './components/UploadComponent.jsx';
 import { DocumentList } from './components/DocumentList.jsx';
 import { downloadDocument, listDocuments } from './services/documentApi.js';
@@ -27,22 +27,32 @@ export default function App() {
     }
   }
 
-  useEffect(() => {
-    loadDocuments();
-  }, []);
-
   async function handleSearch(event) {
     event.preventDefault();
+
+    if (!ownerFilter.trim()) {
+      setDocuments([]);
+      setErrorMessage('Informe o owner para buscar documentos');
+      return;
+    }
+
     await loadDocuments(ownerFilter);
   }
 
-  async function handleUploadSuccess() {
-    await loadDocuments(ownerFilter);
+  async function handleUploadSuccess(owner) {
+    const normalizedOwner = typeof owner === 'string' ? owner.trim() : '';
+
+    if (!normalizedOwner) {
+      return;
+    }
+
+    setOwnerFilter(normalizedOwner);
+    await loadDocuments(normalizedOwner);
   }
 
   async function handleDownload(document) {
     try {
-      await downloadDocument(document.id, document.originalName);
+      await downloadDocument(document.id, document.originalName, document.owner);
     } catch (error) {
       setErrorMessage(error.message || 'Falha ao baixar documento');
     }
@@ -78,7 +88,8 @@ export default function App() {
               className="ghost"
               onClick={() => {
                 setOwnerFilter('');
-                loadDocuments('');
+                setDocuments([]);
+                setErrorMessage('');
               }}
             >
               Limpar

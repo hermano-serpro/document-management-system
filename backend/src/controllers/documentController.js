@@ -1,9 +1,14 @@
 function createDocumentController({ documentService }) {
+  function readRequesterOwner(req) {
+    return req.header('x-owner-id') || '';
+  }
+
   async function uploadDocument(req, res, next) {
     try {
-      const document = documentService.createDocument({
+      const document = await documentService.createDocument({
         file: req.file,
         owner: req.body.owner,
+        requesterOwner: readRequesterOwner(req),
       });
 
       return res.status(201).json(document);
@@ -15,7 +20,7 @@ function createDocumentController({ documentService }) {
   async function listDocuments(req, res, next) {
     try {
       const items = documentService.listDocuments({
-        owner: req.query.owner,
+        requesterOwner: readRequesterOwner(req),
       });
 
       return res.status(200).json({
@@ -29,9 +34,13 @@ function createDocumentController({ documentService }) {
 
   async function downloadDocument(req, res, next) {
     try {
-      const result = documentService.getDownloadDocumentById(req.params.id);
+      const result = await documentService.getDownloadDocumentById(
+        req.params.id,
+        readRequesterOwner(req)
+      );
 
       res.setHeader('Content-Type', result.metadata.mimeType);
+      res.setHeader('X-Content-Type-Options', 'nosniff');
       return res.download(result.localPath, result.metadata.originalName);
     } catch (error) {
       return next(error);

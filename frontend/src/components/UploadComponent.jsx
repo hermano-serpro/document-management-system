@@ -21,11 +21,12 @@ export function UploadComponent({ onUploadSuccess }) {
     setIsSubmitting(true);
 
     try {
-      const created = await uploadDocument({ owner: owner.trim(), file });
+      const normalizedOwner = owner.trim();
+      const created = await uploadDocument({ owner: normalizedOwner, file });
       setFeedback(`Upload concluido: ${created.originalName}`);
       setFile(null);
       event.target.reset();
-      await onUploadSuccess();
+      await onUploadSuccess(normalizedOwner);
     } catch (error) {
       setErrorMessage(error.message || 'Falha ao enviar arquivo');
     } finally {
