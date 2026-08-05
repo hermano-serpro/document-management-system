@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { UploadForm } from './components/UploadForm.jsx';
+import { UploadComponent } from './components/UploadComponent.jsx';
 import { DocumentList } from './components/DocumentList.jsx';
 import { downloadDocument, listDocuments } from './services/documentApi.js';
 
@@ -58,7 +58,7 @@ export default function App() {
       </section>
 
       <section className="panel">
-        <UploadForm onUploadSuccess={handleUploadSuccess} />
+        <UploadComponent onUploadSuccess={handleUploadSuccess} />
       </section>
 
       <section className="panel">

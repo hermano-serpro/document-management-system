@@ -1,3 +1,5 @@
+import { DownloadButton } from './DownloadButton.jsx';
+
 function formatDate(isoDate) {
   const date = new Date(isoDate);
   return Number.isNaN(date.getTime()) ? '-' : date.toLocaleString('pt-BR');
@@ -32,9 +34,7 @@ export function DocumentList({ items, isLoading, onDownload }) {
               <td>{item.size} bytes</td>
               <td>{formatDate(item.uploadedAt)}</td>
               <td>
-                <button type="button" onClick={() => onDownload(item)}>
-                  Download
-                </button>
+                <DownloadButton document={item} onDownload={onDownload} />
               </td>
             </tr>
           ))}
