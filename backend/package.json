@@ -18,5 +18,8 @@
   "dependencies": {
     "express": "5.2.1",
     "multer": "2.2.0"
+  },
+  "devDependencies": {
+    "form-data": "^4.0.6"
   }
 }
